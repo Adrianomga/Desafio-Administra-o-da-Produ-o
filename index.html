@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missão Produção</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F6F9; --surface:#FFFFFF; --surface2:#EEF2F7; --ink:#14213D; --ink2:#4A5670; --line:#D8DEE8;
+  --navy:#14213D; --amber:#F5A524; --amber-ink:#7A4D00; --ok:#12805C; --ok-bg:#E3F5EE; --bad:#C2362B; --bad-bg:#FCE9E7;
+  --blue:#2D5BD3; --shadow:0 1px 2px rgba(20,33,61,.06),0 6px 20px rgba(20,33,61,.07);
+  --head:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1424; --surface:#172036; --surface2:#1E2A45; --ink:#E8EDF7; --ink2:#A9B4CC; --line:#2C3A5A;
+  --navy:#0A1020; --amber:#F7B23B; --amber-ink:#F7B23B; --ok:#3CCB95; --ok-bg:#12352B; --bad:#FF7A6E; --bad-bg:#3A1E1E; --blue:#7EA2FF;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);}}
+:root[data-theme="dark"]{
+  --bg:#0E1424; --surface:#172036; --surface2:#1E2A45; --ink:#E8EDF7; --ink2:#A9B4CC; --line:#2C3A5A;
+  --navy:#0A1020; --amber:#F7B23B; --amber-ink:#F7B23B; --ok:#3CCB95; --ok-bg:#12352B; --bad:#FF7A6E; --bad-bg:#3A1E1E; --blue:#7EA2FF;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25);}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--head);line-height:1.15;margin:0}
+button{font:inherit;cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+/* hero */
+.hero{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-45deg,rgba(245,165,36,.0) 0 22px,rgba(245,165,36,.07) 22px 44px);pointer-events:none}
+.hero .wrap{position:relative;padding:40px 16px 32px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#FFD48A;font-weight:600}
+.kicker i{width:10px;height:10px;background:var(--amber);display:inline-block;border-radius:2px}
+.hero h1{font-size:clamp(32px,6vw,54px);margin:10px 0 8px;letter-spacing:-.01em}
+.hero p{max-width:640px;color:#C9D3E8;margin:0}
+.hud{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;align-items:center}
+.hud label{font-size:13px;color:#C9D3E8;display:block;margin-bottom:4px}
+.hud input{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:10px;padding:10px 12px;font:inherit;min-width:240px;max-width:100%}
+.hud input::placeholder{color:#8E9AB8}
+.xp{flex:1;min-width:240px}
+.xpbar{height:12px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}
+.xpbar b{display:block;height:100%;width:0;background:var(--amber);border-radius:99px;transition:width .6s ease}
+.xptxt{display:flex;justify-content:space-between;font-size:13px;color:#C9D3E8;margin-bottom:6px}
+.xptxt strong{color:#fff;font-family:var(--head);font-size:16px}
+@media (max-width:600px){.hero .wrap{padding-top:60px}}
+.theme-btn{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:99px;padding:6px 12px;font-size:13px}
+/* map */
+main{padding:28px 0 60px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:var(--shadow);text-align:left;color:var(--ink);display:flex;flex-direction:column;gap:8px;transition:transform .15s,border-color .15s}
+.card:hover{transform:translateY(-2px);border-color:var(--amber)}
+.card .top{display:flex;justify-content:space-between;align-items:center}
+.tag{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--amber-ink);background:rgba(245,165,36,.16);padding:3px 8px;border-radius:6px}
+.num{font-family:var(--head);font-size:28px;font-weight:700;color:var(--line)}
+.card h3{font-size:19px}
+.card p{margin:0;color:var(--ink2);font-size:14px}
+.badge{margin-top:auto;font-size:13px;font-weight:600;color:var(--ink2)}
+.badge.done{color:var(--ok)}
+.sectitle{display:flex;justify-content:space-between;align-items:end;margin:6px 0 16px;gap:12px;flex-wrap:wrap}
+.sectitle h2{font-size:22px}
+.sectitle p{margin:0;color:var(--ink2);font-size:14px}
+/* challenge view */
+.view{display:none}
+.view.on{display:block}
+.back{background:none;border:none;color:var(--blue);font-weight:600;padding:0;margin-bottom:14px}
+.chead{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px;flex-wrap:wrap}
+.chead .num{font-size:44px;color:var(--amber)}
+.chead h2{font-size:clamp(24px,4vw,32px);margin:4px 0 6px}
+.chead p{margin:0;color:var(--ink2);max-width:720px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.panel h3{font-size:18px;margin-bottom:6px}
+.muted{color:var(--ink2);font-size:14px}
+.mission{border-left:0;background:var(--surface2);border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:15px}
+.mission b{color:var(--ink)}
+/* classifier */
+.items{display:flex;flex-direction:column;gap:10px}
+.item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.item .q{font-weight:500;margin-bottom:8px}
+.item .grp{font-size:12px;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;font-weight:600;margin-bottom:2px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{border:1px solid var(--line);background:var(--surface2);color:var(--ink);border-radius:99px;padding:6px 12px;font-size:14px}
+.opt:hover{border-color:var(--blue)}
+.opt.sel{background:var(--navy);border-color:var(--navy);color:#fff}
+:root[data-theme="dark"] .opt.sel{background:var(--blue);border-color:var(--blue);color:#0E1424}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .opt.sel{background:var(--blue);border-color:var(--blue);color:#0E1424}}
+.item.ok{border-color:var(--ok);background:var(--ok-bg)}
+.item.bad{border-color:var(--bad);background:var(--bad-bg)}
+.fb{display:none;margin-top:8px;font-size:14px}
+.item.ok .fb,.item.bad .fb{display:block}
+.fb b{font-weight:600}
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{background:var(--amber);color:#2A1B00;border:none;border-radius:10px;padding:11px 18px;font-weight:600}
+.btn:hover{filter:brightness(1.05)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.result{display:none;margin-top:14px;border-radius:12px;padding:14px 16px;background:var(--surface2);font-size:15px}
+.result.on{display:block}
+.result strong{font-family:var(--head);font-size:20px}
+/* strategy */
+.briefs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.brief-tab{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:500}
+.brief-tab.on{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
+.brief-tab small{display:block;color:var(--ink2);font-weight:400}
+.strat{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;align-items:start}
+@media (max-width:760px){.strat{grid-template-columns:1fr}}
+.slider{margin-bottom:12px}
+.slider .lab{display:flex;justify-content:space-between;font-weight:500;font-size:15px}
+.slider .lab span:last-child{font-family:var(--head);font-weight:700}
+.slider input{width:100%;accent-color:var(--amber)}
+.budget{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:10px;background:var(--surface2);margin-bottom:14px;font-size:14px}
+.budget strong{font-family:var(--head);font-size:20px}
+.budget.over strong{color:var(--bad)}
+.radar{width:100%;max-width:360px;display:block;margin:0 auto}
+.legend{display:flex;gap:14px;justify-content:center;font-size:13px;color:var(--ink2);margin-top:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* table PMP */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.pmp{border-collapse:separate;border-spacing:0;width:100%;min-width:620px;font-size:14px}
+.pmp th,.pmp td{padding:9px 8px;text-align:center;border-bottom:1px solid var(--line)}
+.pmp th:first-child,.pmp td:first-child{text-align:left;font-weight:600;position:sticky;left:0;background:var(--surface);min-width:170px}
+.pmp thead th{font-family:var(--head);font-size:14px;color:var(--ink2)}
+.pmp tr.key td{background:var(--surface2)}
+.pmp tr.key td:first-child{background:var(--surface2)}
+.pmp select{font:inherit;padding:5px 4px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.cell-ok{color:var(--ok);font-weight:700}
+.cell-bad{color:var(--bad);font-weight:700}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0 16px}
+.rule{background:var(--surface2);border-radius:10px;padding:10px 12px}
+.rule span{display:block;font-size:12px;color:var(--ink2);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.rule strong{font-family:var(--head);font-size:22px}
+/* lead time sim */
+.sim{display:grid;grid-template-columns:.9fr 1.1fr;gap:20px}
+@media (max-width:820px){.sim{grid-template-columns:1fr}}
+.ctrl{margin-bottom:16px}
+.ctrl .lab{font-weight:600;margin-bottom:6px;font-size:15px;display:flex;justify-content:space-between}
+.seg{display:flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1;border:none;background:var(--surface2);color:var(--ink);padding:9px 6px;font-size:14px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--navy);color:#fff}
+:root[data-theme="dark"] .seg button.on{background:var(--blue);color:#0E1424}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .seg button.on{background:var(--blue);color:#0E1424}}
+.big{font-family:var(--head);font-size:44px;font-weight:700;line-height:1}
+.big small{font-size:16px;color:var(--ink2);font-weight:500}
+.target{font-size:14px;color:var(--ink2);margin:4px 0 14px}
+.stack{display:flex;height:34px;border-radius:8px;overflow:hidden;background:var(--surface2);margin-bottom:10px}
+.stack div{height:100%;transition:width .4s ease}
+.comp{display:grid;grid-template-columns:auto 1fr auto;gap:6px 10px;font-size:14px;align-items:center}
+.comp i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.comp .v{font-variant-numeric:tabular-nums;font-weight:600}
+.va{margin-top:12px;font-size:14px;padding:10px 12px;border-radius:10px;background:var(--surface2)}
+.floor{width:100%;display:block;margin-bottom:14px}
+.status{display:inline-block;font-weight:600;font-size:13px;padding:4px 10px;border-radius:99px}
+.status.ok{background:var(--ok-bg);color:var(--ok)}
+.status.bad{background:var(--bad-bg);color:var(--bad)}
+/* summary */
+.sum-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px;gap:10px}
+.sum-row span:last-child{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.medal{font-family:var(--head);font-size:26px;margin:6px 0}
+footer{color:var(--ink2);font-size:13px;padding:0 0 30px}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<header class="hero">
+  <button class="theme-btn" id="themeBtn" type="button" aria-label="Alternar tema">◐ Tema</button>
+  <div class="wrap">
+    <span class="kicker"><i></i>Administração da Produção · Desafios</span>
+    <h1>Missão Produção</h1>
+    <p>Sete desafios para você assumir o papel de gestor da produção: classificar recursos, definir estratégia, montar o plano mestre, reduzir o lead time e cuidar da qualidade do serviço.</p>
+    <div class="hud">
+      <div>
+        <label for="nome">Seu nome</label>
+        <input id="nome" type="text" placeholder="Digite seu nome" autocomplete="name">
+      </div>
+      <div class="xp">
+        <div class="xptxt"><span>Pontuação da missão</span><span><strong id="xpVal">0</strong> / 700</span></div>
+        <div class="xpbar"><b id="xpBar"></b></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- MAPA -->
+  <section class="view on" id="v-map">
+    <div class="sectitle"><div><h2>Escolha um desafio</h2><p>Faça na ordem que preferir. Você pode refazer quantas vezes quiser: vale a melhor pontuação.</p></div>
+      <button class="btn ghost" type="button" data-go="sum">Ver meu resultado</button></div>
+    <div class="grid" id="cards"></div>
+  </section>
+
+  <!-- 1 -->
+  <section class="view" id="v-c1">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="chead"><span class="num">01</span><div><span class="tag">Unidade I</span><h2>Linha de Transformação</h2><p>Toda operação transforma recursos de entrada em saídas. Classifique cada elemento das três operações abaixo.</p></div></div>
+    <div class="mission"><b>Dica:</b> recurso <b>transformado</b> é o que é modificado pelo processo (materiais, informações ou consumidores). Recurso <b>de transformação</b> é o que age sobre ele (instalações e funcionários). <b>Saída</b> é o bem ou serviço entregue.</div>
+    <div class="panel"><div class="items" id="c1-items"></div>
+      <div class="actions"><button class="btn" type="button" id="c1-check">Verificar respostas</button><button class="btn ghost" type="button" id="c1-reset">Recomeçar</button></div>
+      <div class="result" id="c1-res"></div></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="view" id="v-c2">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="chead"><span class="num">02</span><div><span class="tag">Unidade I</span><h2>Conselho de Estratégia</h2><p>Três empresas pediram sua consultoria. Você tem <b>15 pontos</b> para distribuir entre os cinco objetivos de desempenho. Não dá para ser o melhor em tudo: esse é o trade-off.</p></div></div>
+    <div class="briefs" id="c2-tabs"></div>
+    <div class="panel">
+      <div class="mission" id="c2-brief"></div>
+      <div class="strat">
+        <div>
+          <div class="budget" id="c2-budget"><span>Pontos restantes</span><strong id="c2-left">15</strong></div>
+          <div id="c2-sliders"></div>
+          <div class="actions"><button class="btn" type="button" id="c2-check">Apresentar ao cliente</button></div>
+        </div>
+        <div>
+          <svg class="radar" id="c2-radar" viewBox="-30 0 380 300" role="img" aria-label="Gráfico radar da estratégia"></svg>
+          <div class="legend"><span><i style="background:var(--amber)"></i>Sua estratégia</span><span id="c2-leg2" style="display:none"><i style="background:var(--blue)"></i>Perfil ideal</span></div>
+        </div>
+      </div>
+      <div class="result" id="c2-res"></div>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="view" id="v-c3">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="chead"><span class="num">03</span><div><span class="tag">Unidade II</span><h2>Detetive dos Sistemas</h2><p>Leia as pistas de cada empresa e descubra o sistema de produção quanto ao tipo de operação. Depois, identifique a lógica JIT ou JIC por trás de cada prática.</p></div></div>
+    <div class="panel"><h3>Parte A · Tipo de operação</h3><p class="muted">Observe volume, variedade, flexibilidade e layout (Tubino, 2000).</p><div class="items" id="c3a-items" style="margin-top:12px"></div></div>
+    <div class="panel"><h3>Parte B · Just in Time ou Just in Case?</h3><div class="items" id="c3b-items" style="margin-top:12px"></div>
+      <div class="actions"><button class="btn" type="button" id="c3-check">Verificar respostas</button><button class="btn ghost" type="button" id="c3-reset">Recomeçar</button></div>
+      <div class="result" id="c3-res"></div></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="view" id="v-c4">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="chead"><span class="num">04</span><div><span class="tag">Unidade III</span><h2>Monte o Plano Mestre</h2><p>Você é o PCP da <b>Bike Norte</b>, fábrica de bicicletas urbanas. Defina, semana a semana, quantos lotes produzir para atender a demanda sem faltar e sem encher o depósito.</p></div></div>
+    <div class="panel">
+      <div class="rules">
+        <div class="rule"><span>Estoque inicial</span><strong>40</strong></div>
+        <div class="rule"><span>Lote de produção</span><strong>50 un.</strong></div>
+        <div class="rule"><span>Estoque mínimo</span><strong>15</strong></div>
+        <div class="rule"><span>Capacidade do depósito</span><strong>80</strong></div>
+      </div>
+      <div class="mission"><b>Regra da demanda:</b> em cada semana, considere o <b>maior valor</b> entre a previsão de vendas e os pedidos em carteira. O estoque projetado é: estoque anterior + produção − demanda. Ele precisa ficar entre <b>15 e 80</b> em todas as semanas.</div>
+      <div class="tbl-wrap"><table class="pmp" id="c4-tbl"></table></div>
+      <div class="actions"><button class="btn" type="button" id="c4-check">Validar plano</button><button class="btn ghost" type="button" id="c4-reset">Zerar plano</button></div>
+      <div class="result" id="c4-res"></div>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="view" id="v-c5">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="chead"><span class="num">05</span><div><span class="tag">Unidade IV</span><h2>Chão de Fábrica: Lead Time</h2><p>A <b>Camisaria Vale</b> recebeu um pedido de <b>200 camisas</b>, que passam por corte, bordado, costura e acabamento. Hoje o pedido leva quase 70 horas para ficar pronto. A meta é entregar em até <b>30 horas</b>.</p></div></div>
+    <div class="panel">
+      <div class="sim">
+        <div>
+          <div class="ctrl"><div class="lab"><span>Tamanho do lote</span><span id="c5-lotv">200 un.</span></div>
+            <input type="range" id="c5-lot" min="0" max="6" step="1" value="6" style="width:100%;accent-color:var(--amber)" aria-label="Tamanho do lote">
+            <div class="muted">10 · 20 · 25 · 40 · 50 · 100 · 200 camisas por lote</div></div>
+          <div class="ctrl"><div class="lab">Preparação das máquinas (setup)</div>
+            <div class="seg" id="c5-setup"><button type="button" data-v="90" class="on">Setup tradicional · 90 min</button><button type="button" data-v="15">Troca rápida · 15 min</button></div></div>
+          <div class="ctrl"><div class="lab">Arranjo físico</div>
+            <div class="seg" id="c5-layout"><button type="button" data-v="func" class="on">Por processo (funcional)</button><button type="button" data-v="cel">Celular</button></div></div>
+          <div class="ctrl"><div class="lab">Controle da qualidade</div>
+            <div class="seg" id="c5-insp"><button type="button" data-v="final" class="on">Inspeção no final</button><button type="button" data-v="fonte">Qualidade na fonte</button></div></div>
+          <div class="muted">Tempos por camisa: corte 2 min · bordado 3 min · costura 6 min · acabamento 2 min.</div>
+        </div>
+        <div>
+          <svg class="floor" id="c5-floor" viewBox="0 0 440 150" role="img" aria-label="Esquema do chão de fábrica"></svg>
+          <div class="big" id="c5-lt">—</div>
+          <div class="target">Lead time do pedido · meta: até 30 h <span class="status bad" id="c5-st">Fora da meta</span></div>
+          <div class="stack" id="c5-stack"></div>
+          <div class="comp" id="c5-comp"></div>
+          <div class="va" id="c5-va"></div>
+        </div>
+      </div>
+      <div class="actions"><button class="btn" type="button" id="c5-check">Registrar resultado</button><span class="muted" id="c5-tries"></span></div>
+      <div class="result" id="c5-res"></div>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="view" id="v-c6">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="chead"><span class="num">06</span><div><span class="tag">Unidade IV</span><h2>Arquiteto de Layout</h2><p>Oito operações precisam de um arranjo físico. Escolha o layout mais adequado para cada uma e justifique para si mesmo antes de verificar.</p></div></div>
+    <div class="panel"><div class="items" id="c6-items"></div>
+      <div class="actions"><button class="btn" type="button" id="c6-check">Verificar respostas</button><button class="btn ghost" type="button" id="c6-reset">Recomeçar</button></div>
+      <div class="result" id="c6-res"></div></div>
+  </section>
+
+  <!-- 7 -->
+  <section class="view" id="v-c7">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="chead"><span class="num">07</span><div><span class="tag">Unidade V</span><h2>Momento da Verdade</h2><p>Em serviços, produção e consumo acontecem juntos. Identifique a característica de cada situação e, depois, que dimensão da qualidade o cliente está avaliando.</p></div></div>
+    <div class="panel"><h3>Parte A · Características dos serviços</h3><div class="items" id="c7a-items" style="margin-top:12px"></div></div>
+    <div class="panel"><h3>Parte B · Qualidade técnica ou funcional?</h3><p class="muted">Técnica: <b>o que</b> o cliente recebe. Funcional: <b>como</b> ele recebe (Grönroos, 1993).</p><div class="items" id="c7b-items" style="margin-top:12px"></div>
+      <div class="actions"><button class="btn" type="button" id="c7-check">Verificar respostas</button><button class="btn ghost" type="button" id="c7-reset">Recomeçar</button></div>
+      <div class="result" id="c7-res"></div></div>
+  </section>
+
+  <!-- RESUMO -->
+  <section class="view" id="v-sum">
+    <button class="back" type="button" data-go="map">← Voltar aos desafios</button>
+    <div class="panel">
+      <span class="tag">Relatório da missão</span>
+      <div class="medal" id="sum-medal"></div>
+      <p class="muted" id="sum-who"></p>
+      <div id="sum-rows"></div>
+      <div class="actions"><button class="btn" type="button" id="sum-copy">Copiar resultado</button><button class="btn ghost" type="button" id="sum-print">Imprimir / salvar PDF</button><span class="muted" id="sum-msg"></span></div>
+    </div>
+  </section>
+</main>
+<footer class="wrap">Base teórica: CARNEIRO, R. A.; PAIÃO, L. S. <i>Administração da Produção</i>. Maringá: Unicesumar, 2019. Unidades I a V.</footer>
+
+<script>
+(function(){
+"use strict";
+/* ---------- estado ---------- */
+var KEY="missao-producao-v1";
+var state={nome:"",best:{}};
+try{var raw=localStorage.getItem(KEY); if(raw){var p=JSON.parse(raw); if(p&&p.best){state=p;}}}catch(e){}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function $(id){return document.getElementById(id);}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});}
+
+var CH=[
+ {id:"c1",u:"Unidade I",t:"Linha de Transformação",d:"Classifique recursos transformados, de transformação e saídas."},
+ {id:"c2",u:"Unidade I",t:"Conselho de Estratégia",d:"Distribua 15 pontos entre os objetivos de desempenho."},
+ {id:"c3",u:"Unidade II",t:"Detetive dos Sistemas",d:"Contínuo, massa, lote ou projeto? JIT ou JIC?"},
+ {id:"c4",u:"Unidade III",t:"Monte o Plano Mestre",d:"Planeje 6 semanas de produção sem faltar estoque."},
+ {id:"c5",u:"Unidade IV",t:"Chão de Fábrica: Lead Time",d:"Simule lote, setup e layout até bater a meta."},
+ {id:"c6",u:"Unidade IV",t:"Arquiteto de Layout",d:"Escolha o arranjo físico certo para cada operação."},
+ {id:"c7",u:"Unidade V",t:"Momento da Verdade",d:"Características e qualidade na prestação de serviços."}
+];
+
+function total(){var s=0;CH.forEach(function(c){s+=(state.best[c.id]||0);});return s;}
+function setBest(id,score){score=Math.round(score); if(!(id in state.best)||score>state.best[id]){state.best[id]=score;} persist(); renderHud(); renderCards();}
+function renderHud(){var t=total(); $("xpVal").textContent=t; $("xpBar").style.width=(t/7)+"%";}
+function renderCards(){
+  var h="";
+  CH.forEach(function(c,i){
+    var b=state.best[c.id];
+    h+='<button type="button" class="card" data-go="'+c.id+'"><div class="top"><span class="tag">'+c.u+'</span><span class="num">0'+(i+1)+'</span></div><h3>'+c.t+'</h3><p>'+c.d+'</p><span class="badge'+(b!=null?' done':'')+'">'+(b!=null?'Melhor pontuação: '+b+'/100':'Não iniciado')+'</span></button>';
+  });
+  $("cards").innerHTML=h;
+}
+
+/* ---------- navegação ---------- */
+function go(v){
+  var views=document.querySelectorAll(".view"); for(var i=0;i<views.length;i++){views[i].classList.remove("on");}
+  $("v-"+v).classList.add("on");
+  if(v==="sum"){renderSummary();}
+  if(v==="c2"){drawRadar();}
+  window.scrollTo(0,0);
+}
+document.addEventListener("click",function(e){var el=e.target.closest("[data-go]"); if(el){go(el.getAttribute("data-go"));}});
+
+/* ---------- tema ---------- */
+$("themeBtn").addEventListener("click",function(){
+  var r=document.documentElement; var cur=r.getAttribute("data-theme");
+  var dark=cur?cur==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;
+  r.setAttribute("data-theme",dark?"light":"dark");
+});
+
+/* ---------- nome ---------- */
+$("nome").value=state.nome||"";
+$("nome").addEventListener("input",function(){state.nome=this.value; persist();});
+
+/* ---------- classificador genérico ---------- */
+function Classifier(container,items,cats){
+  this.c=$(container); this.items=items; this.cats=cats; this.ans={}; this.render();
+}
+Classifier.prototype.render=function(){
+  var self=this,h="",lastG=null;
+  this.items.forEach(function(it,i){
+    if(it.g&&it.g!==lastG){lastG=it.g;}
+    h+='<div class="item" id="'+self.c.id+'-'+i+'">'+(it.g?'<div class="grp">'+esc(it.g)+'</div>':'')+'<div class="q">'+esc(it.q)+'</div><div class="opts" role="group">';
+    self.cats.forEach(function(c,k){h+='<button type="button" class="opt" data-i="'+i+'" data-k="'+k+'" aria-pressed="false">'+esc(c)+'</button>';});
+    h+='</div><div class="fb"></div></div>';
+  });
+  this.c.innerHTML=h; this.ans={};
+  this.c.onclick=function(e){
+    var b=e.target.closest(".opt"); if(!b)return;
+    var i=+b.getAttribute("data-i"),k=+b.getAttribute("data-k");
+    self.ans[i]=k;
+    var card=$(self.c.id+"-"+i); card.classList.remove("ok","bad");
+    var bs=card.querySelectorAll(".opt"); for(var j=0;j<bs.length;j++){bs[j].classList.toggle("sel",j===k); bs[j].setAttribute("aria-pressed",j===k?"true":"false");}
+  };
+};
+Classifier.prototype.answered=function(){return Object.keys(this.ans).length;};
+Classifier.prototype.check=function(){
+  var self=this,ok=0;
+  this.items.forEach(function(it,i){
+    var card=$(self.c.id+"-"+i), a=self.ans[i], right=(a===it.a);
+    if(right)ok++;
+    card.classList.remove("ok","bad"); card.classList.add(right?"ok":"bad");
+    card.querySelector(".fb").innerHTML=(right?"<b>Correto.</b> ":"<b>Resposta: "+esc(self.cats[it.a])+".</b> ")+esc(it.e);
+  });
+  return ok;
+};
+function wireClassifier(prefix,parts){
+  var n=0; parts.forEach(function(p){n+=p.items.length;});
+  $(prefix+"-check").addEventListener("click",function(){
+    var miss=0; parts.forEach(function(p){miss+=p.items.length-p.answered();});
+    var res=$(prefix+"-res");
+    if(miss>0){res.className="result on"; res.innerHTML="Faltam <b>"+miss+"</b> item(ns) sem resposta. Responda todos para verificar."; return;}
+    var ok=0; parts.forEach(function(p){ok+=p.check();});
+    var sc=ok/n*100; setBest(prefix,sc);
+    res.className="result on";
+    res.innerHTML="<strong>"+ok+" de "+n+" acertos · "+Math.round(sc)+" pontos</strong><br>"+(sc===100?"Excelente! Domínio completo do conteúdo.":sc>=70?"Muito bem! Revise os itens em vermelho e tente gabaritar.":"Leia as explicações em vermelho, revise a unidade no livro e tente novamente.");
+    res.scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+  $(prefix+"-reset").addEventListener("click",function(){parts.forEach(function(p){p.render();}); $(prefix+"-res").className="result";});
+}
+
+/* ---------- desafio 1 ---------- */
+var C1=["Recurso transformado","Recurso de transformação","Saída (output)"];
+var c1=new Classifier("c1-items",[
+ {g:"Padaria",q:"Farinha, fermento e sal",a:0,e:"São materiais que mudam de estado: viram pão."},
+ {g:"Padaria",q:"Forno elétrico",a:1,e:"Instalação/equipamento: age sobre a massa sem ser consumido."},
+ {g:"Padaria",q:"Padeiro",a:1,e:"Funcionário que opera a transformação."},
+ {g:"Padaria",q:"Encomenda de 50 pães recebida pelo WhatsApp",a:0,e:"Informação que é processada pela operação."},
+ {g:"Padaria",q:"Pão francês quentinho no balcão",a:2,e:"É o bem entregue ao cliente."},
+ {g:"Hospital",q:"Paciente com o braço fraturado",a:0,e:"O consumidor é o próprio recurso transformado em operações de saúde."},
+ {g:"Hospital",q:"Aparelho de raio-X e centro cirúrgico",a:1,e:"Instalações que agem sobre o paciente."},
+ {g:"Hospital",q:"Equipe de ortopedia",a:1,e:"Funcionários que realizam a transformação."},
+ {g:"Hospital",q:"Paciente tratado e recuperado",a:2,e:"O resultado do processo é o serviço prestado."},
+ {g:"Escritório de contabilidade",q:"Notas fiscais e extratos do cliente",a:0,e:"Informações que serão processadas."},
+ {g:"Escritório de contabilidade",q:"Computadores e software contábil",a:1,e:"Instalações e tecnologia: agem sobre as informações."},
+ {g:"Escritório de contabilidade",q:"Balanço patrimonial e guias de impostos",a:2,e:"Saída: informação transformada entregue ao cliente."}
+],C1);
+wireClassifier("c1",[c1]);
+
+/* ---------- desafio 2 ---------- */
+var OBJ=["Custo","Qualidade","Rapidez","Confiabilidade","Flexibilidade"];
+var BRIEFS=[
+ {n:"Lanche Já",s:"Rede de fast food popular",d:"Público jovem, ticket baixo, atendimento no balcão em poucos minutos. O cliente compara preço com a concorrência na mesma praça de alimentação.",t:[5,2,4,3,1],
+  why:"Fast food popular compete por <b>custo</b> e <b>rapidez</b>, com padronização (confiabilidade). Flexibilidade alta encareceria a operação."},
+ {n:"Ateliê Aurora",s:"Joias sob medida",d:"Cada peça é desenhada com o cliente. Clientes de alta renda pagam caro por exclusividade e acabamento impecável e aceitam esperar semanas.",t:[1,5,1,3,5],
+  why:"Produção por projeto: o cliente paga por <b>qualidade</b> e <b>flexibilidade</b> (peça única). Custo e rapidez ficam em segundo plano."},
+ {n:"PeçaCerta",s:"Peças para máquinas agrícolas",d:"Atende fazendas em plena colheita: uma colheitadeira parada custa caro. O produtor quer a peça certa, no prazo prometido, o mais rápido possível.",t:[1,3,5,5,1],
+  why:"Máquina parada é prejuízo: <b>rapidez</b> e <b>confiabilidade</b> de entrega dominam. Preço baixo pesa menos que a peça chegar certa e no prazo."}
+];
+var bIdx=0, alloc=[[3,3,3,3,3],[3,3,3,3,3],[3,3,3,3,3]], c2scores=[null,null,null], showIdeal=false;
+function renderTabs(){
+  var h=""; BRIEFS.forEach(function(b,i){h+='<button type="button" class="brief-tab'+(i===bIdx?' on':'')+'" data-b="'+i+'">'+esc(b.n)+(c2scores[i]!=null?' · '+c2scores[i]+' pts':'')+'<small>'+esc(b.s)+'</small></button>';});
+  $("c2-tabs").innerHTML=h;
+}
+$("c2-tabs").addEventListener("click",function(e){var b=e.target.closest(".brief-tab"); if(!b)return; bIdx=+b.getAttribute("data-b"); showIdeal=c2scores[bIdx]!=null; renderBrief();});
+function renderBrief(){
+  var b=BRIEFS[bIdx]; renderTabs();
+  $("c2-brief").innerHTML="<b>"+esc(b.n)+" · "+esc(b.s)+".</b> "+esc(b.d);
+  var h=""; OBJ.forEach(function(o,k){h+='<div class="slider"><div class="lab"><span>'+o+'</span><span id="c2-v'+k+'">'+alloc[bIdx][k]+'</span></div><input type="range" min="0" max="6" step="1" value="'+alloc[bIdx][k]+'" data-k="'+k+'" aria-label="'+o+'"></div>';});
+  $("c2-sliders").innerHTML=h;
+  updBudget(); drawRadar();
+  var r=$("c2-res"); if(c2scores[bIdx]!=null){showResult2();}else{r.className="result";}
+}
+$("c2-sliders").addEventListener("input",function(e){
+  var k=+e.target.getAttribute("data-k"); if(isNaN(k))return;
+  var v=+e.target.value, a=alloc[bIdx], others=0; for(var i=0;i<5;i++){if(i!==k)others+=a[i];}
+  if(others+v>15){v=15-others; e.target.value=v;}
+  a[k]=v; $("c2-v"+k).textContent=v; updBudget(); drawRadar();
+});
+function updBudget(){var s=alloc[bIdx].reduce(function(x,y){return x+y;},0),l=15-s; $("c2-left").textContent=l; $("c2-budget").classList.toggle("over",l!==0);}
+function drawRadar(){
+  var cx=160,cy=150,R=110,svg="",a=alloc[bIdx],t=BRIEFS[bIdx].t;
+  function pt(k,v){var ang=-Math.PI/2+k*2*Math.PI/5;return [cx+Math.cos(ang)*R*v/6,cy+Math.sin(ang)*R*v/6];}
+  for(var r=2;r<=6;r+=2){var ps=[];for(var k=0;k<5;k++){ps.push(pt(k,r).join(","));} svg+='<polygon points="'+ps.join(" ")+'" fill="none" stroke="var(--line)" stroke-width="1"/>';}
+  for(k=0;k<5;k++){var p=pt(k,6); svg+='<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0]+'" y2="'+p[1]+'" stroke="var(--line)"/>';
+    var lp=pt(k,7.3); svg+='<text x="'+lp[0]+'" y="'+(lp[1]+4)+'" text-anchor="middle" font-size="12" font-family="Inter,sans-serif" fill="var(--ink2)">'+OBJ[k]+'</text>';}
+  if(showIdeal){var ti=[];for(k=0;k<5;k++){ti.push(pt(k,t[k]).join(","));} svg+='<polygon points="'+ti.join(" ")+'" fill="var(--blue)" fill-opacity=".15" stroke="var(--blue)" stroke-width="2" stroke-dasharray="5 4"/>';}
+  var us=[];for(k=0;k<5;k++){us.push(pt(k,a[k]).join(","));}
+  svg+='<polygon points="'+us.join(" ")+'" fill="var(--amber)" fill-opacity=".28" stroke="var(--amber)" stroke-width="2.5"/>';
+  for(k=0;k<5;k++){p=pt(k,a[k]); svg+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="3.5" fill="var(--amber)"/>';}
+  $("c2-radar").innerHTML=svg; $("c2-leg2").style.display=showIdeal?"inline":"none";
+}
+function showResult2(){
+  var b=BRIEFS[bIdx],r=$("c2-res"),sc=c2scores[bIdx];
+  r.className="result on";
+  r.innerHTML="<strong>"+b.n+": "+sc+" pontos</strong><br>"+b.why+"<br><span class='muted'>A linha tracejada azul mostra o perfil de referência. Ajuste e apresente de novo se quiser melhorar.</span>";
+}
+$("c2-check").addEventListener("click",function(){
+  var a=alloc[bIdx],s=a.reduce(function(x,y){return x+y;},0),r=$("c2-res");
+  if(s!==15){r.className="result on"; r.innerHTML="Use exatamente os <b>15 pontos</b>. Restam "+(15-s)+"."; return;}
+  var t=BRIEFS[bIdx].t,dist=0; for(var k=0;k<5;k++){dist+=Math.abs(a[k]-t[k]);}
+  var sc=Math.max(0,Math.round(100-dist*7));
+  c2scores[bIdx]=Math.max(c2scores[bIdx]||0,sc); showIdeal=true; drawRadar(); renderTabs(); showResult2();
+  if(c2scores.every(function(x){return x!=null;})){
+    var avg=(c2scores[0]+c2scores[1]+c2scores[2])/3; setBest("c2",avg);
+    r.innerHTML+="<br><b>Desafio concluído: média de "+Math.round(avg)+" pontos nos três clientes.</b>";
+  }else{r.innerHTML+="<br><span class='muted'>Atenda os três clientes para concluir o desafio.</span>";}
+});
+
+/* ---------- desafio 3 ---------- */
+var c3a=new Classifier("c3a-items",[
+ {q:"Refinaria que opera 24 horas por dia, produto altamente padronizado, tecnologia de capital intensivo e pouco flexível.",a:0,e:"Alta uniformidade e produção ininterrupta caracterizam o processo contínuo (ex.: petróleo)."},
+ {q:"Usina que gera energia elétrica sem interrupção para a rede.",a:0,e:"Energia elétrica é o exemplo clássico de processo contínuo."},
+ {q:"Montadora de automóveis: alto volume, pouca variação entre modelos, layout por produto e componentes padronizados.",a:1,e:"Grande escala de produtos padronizados = repetitivo em massa."},
+ {q:"Fábrica de porcas e arruelas que produz milhões de peças iguais por mês.",a:1,e:"Altíssimo volume e baixa variedade: repetitivo em massa."},
+ {q:"Fábrica de calçados com volume médio e vários modelos; cada lote passa por setores e precisa ser programado.",a:2,e:"Volume médio, variedade alta e layout por processo: repetitivo em lote."},
+ {q:"Oficina de reparos que programa cada lote de serviços conforme as operações anteriores terminam.",a:2,e:"O livro cita oficinas de reparos como exemplo de processo em lote."},
+ {q:"Estaleiro que constrói um navio conforme as especificações do armador.",a:3,e:"Produto único, sob encomenda, mão de obra especializada: processo por projeto."},
+ {q:"Alfaiataria que confecciona ternos sob medida para cada cliente.",a:3,e:"Atende uma necessidade específica do cliente: processo por projeto."}
+],["Contínuo","Repetitivo em massa","Repetitivo em lote","Por projeto"]);
+var c3b=new Classifier("c3b-items",[
+ {q:"A produção só começa quando o mercado puxa o pedido.",a:0,e:"Produção puxada é a essência do JIT (Sistema Toyota)."},
+ {q:"Estoques altos servem de proteção contra atrasos de fornecedores e quebras.",a:1,e:"O sistema convencional usa o estoque como 'seguro' contra a variabilidade."},
+ {q:"Lotes grandes para diluir o custo de preparação das máquinas.",a:1,e:"Típico do JIC; o JIT ataca o setup para viabilizar lotes pequenos."},
+ {q:"Poucos fornecedores parceiros, com entregas frequentes e em pequenas quantidades.",a:0,e:"Parceria e entregas frequentes sustentam o fluxo JIT."},
+ {q:"Produção programada a partir da previsão de vendas e 'empurrada' para o depósito.",a:1,e:"Produção empurrada por previsão é a lógica convencional (JIC)."},
+ {q:"Melhoria contínua para reduzir lead time, setup e desperdícios.",a:0,e:"Kaizen e eliminação de desperdícios estão no centro do JIT."}
+],["Just in Time (JIT)","Just in Case (JIC)"]);
+wireClassifier("c3",[c3a,c3b]);
+
+/* ---------- desafio 4 ---------- */
+var PREV=[45,60,30,90,20,85], PED=[40,70,25,95,15,60], EI=40, LOTE=50, EMIN=15, EMAX=80;
+var plan=[0,0,0,0,0,0];
+function dem(i){return Math.max(PREV[i],PED[i]);}
+function renderPMP(){
+  var h='<thead><tr><th>Semana</th>'; for(var i=0;i<6;i++){h+='<th>'+(i+1)+'</th>';} h+='</tr></thead><tbody>';
+  h+='<tr><td>Previsão de vendas</td>'+PREV.map(function(v){return '<td>'+v+'</td>';}).join("")+'</tr>';
+  h+='<tr><td>Pedidos em carteira</td>'+PED.map(function(v){return '<td>'+v+'</td>';}).join("")+'</tr>';
+  h+='<tr class="key"><td>Demanda considerada</td>'+PREV.map(function(v,i){return '<td><b>'+dem(i)+'</b></td>';}).join("")+'</tr>';
+  h+='<tr class="key"><td>Produção (PMP)</td>';
+  for(i=0;i<6;i++){h+='<td><select data-w="'+i+'" aria-label="Produção semana '+(i+1)+'"><option value="0">0</option><option value="1">50</option><option value="2">100</option><option value="3">150</option></select></td>';}
+  h+='</tr><tr><td>Estoque projetado</td>'; for(i=0;i<6;i++){h+='<td id="c4-e'+i+'">–</td>';} h+='</tr></tbody>';
+  $("c4-tbl").innerHTML=h; calcPMP();
+}
+function calcPMP(){
+  var e=EI,res=[];
+  for(var i=0;i<6;i++){e=e+plan[i]*LOTE-dem(i); res.push(e); var td=$("c4-e"+i); td.textContent=e; td.className=(e>=EMIN&&e<=EMAX)?"cell-ok":"cell-bad";}
+  return res;
+}
+$("c4-tbl").addEventListener("change",function(e){var w=e.target.getAttribute("data-w"); if(w==null)return; plan[+w]=+e.target.value; calcPMP(); $("c4-res").className="result";});
+$("c4-check").addEventListener("click",function(){
+  var res=calcPMP(),ok=0,msgs=[];
+  res.forEach(function(e,i){ if(e>=EMIN&&e<=EMAX){ok++;} else if(e<EMIN){msgs.push("Semana "+(i+1)+": estoque "+e+" abaixo do mínimo (risco de faltar bicicleta).");} else {msgs.push("Semana "+(i+1)+": estoque "+e+" acima da capacidade do depósito (capital parado).");} });
+  var sc=ok/6*100; setBest("c4",sc);
+  var r=$("c4-res"); r.className="result on";
+  r.innerHTML="<strong>"+ok+" de 6 semanas dentro dos limites · "+Math.round(sc)+" pontos</strong><br>"+(ok===6?"Plano aprovado! Você conectou a demanda à capacidade, que é exatamente o papel do PMP no nível tático. Repare que nem toda semana precisa de produção.":msgs.join("<br>"));
+});
+$("c4-reset").addEventListener("click",function(){plan=[0,0,0,0,0,0]; renderPMP(); $("c4-res").className="result";});
+
+/* ---------- desafio 5 ---------- */
+var LOTS=[10,20,25,40,50,100,200], T=[2,3,6,2], Q=200, NAMES=["Corte","Bordado","Costura","Acabam."];
+var sim={lot:6,setup:90,layout:"func",insp:"final"}, tries=0;
+var COLORS={va:"#12805C",lote:"#F5A524",setup:"#8E6CEF",fila:"#C2362B",transp:"#2D5BD3",insp:"#6B7A99"};
+var LABELS={va:"Processamento que agrega valor",lote:"Espera pelo lote",setup:"Preparação (setup)",fila:"Espera em fila",transp:"Transporte",insp:"Inspeção"};
+function calcLT(){
+  var L=LOTS[sim.lot],n=Q/L,tsum=13,tmax=6,S=sim.setup;
+  var cel=sim.layout==="cel";
+  var proc=L*tsum+(n-1)*L*tmax;
+  var c={va:tsum,lote:proc-tsum,setup:4*S+(n-1)*S,fila:4*(cel?10:240),transp:3*(cel?2:30),insp:sim.insp==="fonte"?5:90};
+  var tot=0; for(var k in c){tot+=c[k];} c.total=tot; return c;
+}
+function fmt(m){var h=Math.floor(m/60),mm=Math.round(m%60); return h+" h "+(mm<10?"0":"")+mm;}
+function drawFloor(){
+  var cel=sim.layout==="cel",s="",xs,ys;
+  if(cel){xs=[150,210,270,330];ys=[75,75,75,75];}else{xs=[40,160,280,400];ys=[30,100,30,100];}
+  s+='<rect x="2" y="2" width="436" height="146" rx="12" fill="var(--surface2)"/>';
+  if(cel){s+='<rect x="120" y="40" width="240" height="70" rx="35" fill="none" stroke="var(--amber)" stroke-width="2" stroke-dasharray="6 5"/><text x="240" y="132" text-anchor="middle" font-size="12" fill="var(--ink2)" font-family="Inter,sans-serif">Célula: estações vizinhas, fluxo contínuo</text>';}
+  for(var i=0;i<3;i++){s+='<line x1="'+xs[i]+'" y1="'+ys[i]+'" x2="'+xs[i+1]+'" y2="'+ys[i+1]+'" stroke="var(--ink2)" stroke-width="2" stroke-dasharray="'+(cel?"0":"4 4")+'" marker-end="url(#ar)"/>';}
+  s='<defs><marker id="ar" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--ink2)"/></marker></defs>'+s;
+  for(i=0;i<4;i++){s+='<rect x="'+(xs[i]-24)+'" y="'+(ys[i]-16)+'" width="48" height="32" rx="7" fill="var(--navy)"/><text x="'+xs[i]+'" y="'+(ys[i]+4)+'" text-anchor="middle" font-size="10" fill="#fff" font-family="Inter,sans-serif">'+NAMES[i]+'</text>';
+    if(!cel){s+='<text x="'+xs[i]+'" y="'+(ys[i]+(ys[i]<70?30:-22))+'" text-anchor="middle" font-size="10" fill="var(--bad)" font-family="Inter,sans-serif">fila</text>';}}
+  if(!cel){s+='<text x="220" y="138" text-anchor="middle" font-size="12" fill="var(--ink2)" font-family="Inter,sans-serif">Departamentos separados: o lote viaja e espera</text>';}
+  $("c5-floor").innerHTML=s;
+}
+function renderSim(){
+  var c=calcLT(),order=["va","lote","setup","fila","transp","insp"],st="",cp="";
+  $("c5-lotv").textContent=LOTS[sim.lot]+" un. ("+(Q/LOTS[sim.lot])+" lote"+(Q/LOTS[sim.lot]>1?"s":"")+")";
+  $("c5-lt").innerHTML=fmt(c.total)+" <small>("+Math.round(c.total)+" min)</small>";
+  var ok=c.total<=1800; var stEl=$("c5-st"); stEl.className="status "+(ok?"ok":"bad"); stEl.textContent=ok?"Dentro da meta":"Fora da meta";
+  order.forEach(function(k){var w=c[k]/c.total*100; st+='<div title="'+LABELS[k]+'" style="width:'+w+'%;background:'+COLORS[k]+'"></div>'; cp+='<i style="background:'+COLORS[k]+'"></i><span>'+LABELS[k]+'</span><span class="v">'+fmt(c[k])+'</span>';});
+  $("c5-stack").innerHTML=st; $("c5-comp").innerHTML=cp;
+  $("c5-va").innerHTML="Cada camisa recebe apenas <b>13 min</b> de trabalho que agrega valor, mas o pedido leva <b>"+fmt(c.total)+"</b>. Índice de valor agregado: <b>"+(13/c.total*100).toFixed(2).replace(".",",")+"%</b>.";
+  drawFloor();
+}
+$("c5-lot").addEventListener("input",function(){sim.lot=+this.value; renderSim();});
+function seg(id,key){$(id).addEventListener("click",function(e){var b=e.target.closest("button"); if(!b)return; var v=b.getAttribute("data-v"); sim[key]=isNaN(+v)?v:+v; var bs=this.querySelectorAll("button"); for(var i=0;i<bs.length;i++){bs[i].classList.toggle("on",bs[i]===b);} renderSim();});}
+seg("c5-setup","setup"); seg("c5-layout","layout"); seg("c5-insp","insp");
+$("c5-check").addEventListener("click",function(){
+  var c=calcLT(),t=c.total,sc,msg; tries++;
+  if(t<=1650){sc=100;msg="Configuração de excelência! Você combinou layout celular, troca rápida e lotes pequenos: o tempo de espera despencou.";}
+  else if(t<=1800){sc=80;msg="Meta batida! Ainda dá para ganhar algumas horas ajustando o tamanho do lote ou a qualidade na fonte.";}
+  else if(t<=2700){sc=50;msg="Melhorou, mas ainda está fora da meta. Observe qual barra domina o gráfico: é ela que precisa ser atacada.";}
+  else{sc=20;msg="Muito longe da meta. Lembre: máquinas mais rápidas não resolvem se o tempo está na espera, no setup e no transporte.";}
+  setBest("c5",sc); $("c5-tries").textContent="Tentativas registradas: "+tries;
+  var r=$("c5-res"); r.className="result on";
+  r.innerHTML="<strong>Lead time: "+fmt(t)+" · "+sc+" pontos</strong><br>"+msg+"<br><span class='muted'>Teste: reduza o lote com setup tradicional. O que acontece com a barra roxa? Por que lote pequeno exige setup rápido?</span>";
+});
+
+/* ---------- desafio 6 ---------- */
+var c6=new Classifier("c6-items",[
+ {q:"Linha de montagem de automóveis: o produto percorre estações em sequência fixa.",a:0,e:"Produto padronizado, alto volume, fluxo sequencial: layout por produto (em linha)."},
+ {q:"Engarrafadora de refrigerantes com esteiras contínuas de enchimento e rotulagem.",a:0,e:"Fluxo fixo e repetitivo: layout em linha."},
+ {q:"Hospital com setores de raio-X, laboratório e cirurgia; o paciente se desloca conforme a necessidade.",a:1,e:"Recursos agrupados por função e roteiros variados: layout por processo (funcional)."},
+ {q:"Fábrica de móveis com departamentos de corte, usinagem, pintura e montagem; cada modelo segue seu roteiro.",a:1,e:"Máquinas semelhantes no mesmo setor e roteiros diferentes: layout funcional."},
+ {q:"Estaleiro: o navio fica parado e equipes e materiais vão até ele.",a:2,e:"Produto grande demais para se mover: layout posicional (posição fixa)."},
+ {q:"Construção de um edifício residencial.",a:2,e:"Os recursos vão até o produto: layout posicional."},
+ {q:"Usinagem reorganizada em ilhas, cada uma com máquinas diferentes que fabricam uma família de peças do início ao fim.",a:3,e:"Agrupar máquinas diferentes por família de produtos é o layout celular."},
+ {q:"Confecção que monta pequenas equipes multifuncionais, cada uma produzindo um modelo completo de camisa.",a:3,e:"Pequenas unidades autônomas por família de produtos: layout celular."}
+],["Por produto (linha)","Por processo (funcional)","Posicional (fixo)","Celular"]);
+wireClassifier("c6",[c6]);
+
+/* ---------- desafio 7 ---------- */
+var c7a=new Classifier("c7a-items",[
+ {q:"Um quarto de hotel vazio hoje à noite é receita perdida para sempre.",a:2,e:"O serviço não pode ser estocado para ser vendido depois."},
+ {q:"O corte de cabelo só acontece com o cabeleireiro e o cliente presentes ao mesmo tempo.",a:1,e:"O serviço não se separa de quem o presta."},
+ {q:"Antes de contratar uma consultoria, você não consegue tocá-la nem testá-la.",a:0,e:"Sem substância física: o cliente compra uma promessa."},
+ {q:"O mesmo restaurante atende muito bem na segunda e mal no sábado lotado.",a:3,e:"O padrão varia de uma ocasião para outra."},
+ {q:"Os assentos não vendidos de um voo não podem ser guardados para a próxima semana.",a:2,e:"Capacidade não usada se perde: perecibilidade."},
+ {q:"Dois atendentes da mesma agência bancária dão respostas diferentes à mesma dúvida.",a:3,e:"A qualidade depende de quem presta e de quando presta."}
+],["Intangibilidade","Inseparabilidade","Perecibilidade","Variabilidade"]);
+var c7b=new Classifier("c7b-items",[
+ {q:"O mecânico resolveu de vez o barulho do motor.",a:0,e:"É o resultado entregue: o que o cliente recebeu."},
+ {q:"O mecânico explicou o problema com paciência e cordialidade.",a:1,e:"Diz respeito à forma de atender: como o cliente recebeu."},
+ {q:"O prato chegou no ponto certo e na temperatura certa.",a:0,e:"Resultado técnico do processo."},
+ {q:"O caixa eletrônico fica em local de fácil acesso e bem sinalizado.",a:1,e:"Facilidade de acesso é parte da qualidade funcional."},
+ {q:"O garçom foi atencioso e estava com a aparência bem cuidada.",a:1,e:"Comportamento e aparência de quem atende: qualidade funcional."}
+],["Técnica (o quê)","Funcional (como)"]);
+wireClassifier("c7",[c7a,c7b]);
+
+/* ---------- resumo ---------- */
+function renderSummary(){
+  var t=total(),h="",done=0;
+  CH.forEach(function(c,i){var b=state.best[c.id]; if(b!=null)done++; h+='<div class="sum-row"><span>0'+(i+1)+' · '+c.t+' <span class="muted">('+c.u+')</span></span><span>'+(b!=null?b+'/100':'—')+'</span></div>';});
+  h+='<div class="sum-row"><span><b>Total</b></span><span><b>'+t+'/700</b></span></div>';
+  $("sum-rows").innerHTML=h;
+  var m=t>=630?"Gestor(a) de Produção Classe Mundial":t>=490?"Gestor(a) de Produção Sênior":t>=280?"Analista de PCP":"Trainee de Produção";
+  $("sum-medal").textContent=done<7?"Missão em andamento":m;
+  $("sum-who").textContent=(state.nome?state.nome+" · ":"")+done+" de 7 desafios concluídos · "+new Date().toLocaleDateString("pt-BR");
+}
+$("sum-copy").addEventListener("click",function(){
+  var lines=["Missão Produção · Administração da Produção","Aluno(a): "+(state.nome||"(sem nome)"),"Data: "+new Date().toLocaleDateString("pt-BR")];
+  CH.forEach(function(c,i){var b=state.best[c.id]; lines.push("0"+(i+1)+" "+c.t+": "+(b!=null?b+"/100":"não realizado"));});
+  lines.push("Total: "+total()+"/700");
+  var txt=lines.join("\n"),msg=$("sum-msg");
+  function fallback(){var ta=document.createElement("textarea"); ta.value=txt; ta.className="sr"; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); msg.textContent="Copiado!";}catch(e){msg.textContent="Não foi possível copiar; use Imprimir.";} document.body.removeChild(ta);}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(function(){msg.textContent="Copiado!";},fallback);}else{fallback();}
+});
+$("sum-print").addEventListener("click",function(){window.print();});
+
+/* ---------- init ---------- */
+renderHud(); renderCards(); renderBrief(); renderPMP(); renderSim();
+})();
+</script>
+</body>
+</html>
